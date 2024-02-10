@@ -9,4 +9,6 @@ public class EndPoint {
 	public static final String UPDATE_EMPLOYEE_BY_ID = "/update";
 	public static final String DELETE_EMPLOYEE_BY_ID = "/delete";
 	public static final String GET_MANAGER_BY_NTH_LEVEL = "/getManagerByNthLevel";
+	public static final String SEND_SIMPLE_MAIL = "/sendMail";
+	public static final String SEND_MAIL_WITH_ATTACHMENT = "/sendMailWithAttachment";
 }

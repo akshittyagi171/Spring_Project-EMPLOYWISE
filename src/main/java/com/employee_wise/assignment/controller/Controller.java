@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.employee_wise.assignment.constants.EndPoint;
+import com.employee_wise.assignment.entity.EmailDetails;
 import com.employee_wise.assignment.entity.Employee;
+import com.employee_wise.assignment.response.EmailResponse;
 import com.employee_wise.assignment.response.PostEmployeeResponse;
+import com.employee_wise.assignment.service.EmailService;
 import com.employee_wise.assignment.service.EmployeeService;
 
 @RestController
@@ -26,6 +29,9 @@ public class Controller {
 	
 	@Autowired
 	private EmployeeService empSerImp;
+	
+	@Autowired 
+	private EmailService emailService;
 	
 	@PostMapping(EndPoint.ADD_EMPLOYEE)
 	public ResponseEntity<PostEmployeeResponse> addEmployee(@RequestBody Employee emp){
@@ -71,5 +77,19 @@ public class Controller {
 		PostEmployeeResponse Emp = this.empSerImp.getNthManager(id, n);
 		return new ResponseEntity<PostEmployeeResponse>(Emp,HttpStatus.OK);
 	}
+	
+	@PostMapping(EndPoint.SEND_SIMPLE_MAIL)
+    public ResponseEntity<EmailResponse> sendMail(@RequestBody EmailDetails details)
+    {
+        EmailResponse status = emailService.sendSimpleMail(details);
+        return new ResponseEntity<EmailResponse>(status,HttpStatus.OK);
+    }
+
+    @PostMapping(EndPoint.SEND_MAIL_WITH_ATTACHMENT)
+    public ResponseEntity<EmailResponse> sendMailWithAttachment(@RequestBody EmailDetails details)
+    {
+        EmailResponse status = emailService.sendMailWithAttachment(details);
+        return new ResponseEntity<EmailResponse>(status,HttpStatus.OK);
+    }
 	
 }

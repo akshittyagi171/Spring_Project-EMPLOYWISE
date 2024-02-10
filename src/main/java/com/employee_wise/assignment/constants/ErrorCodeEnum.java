@@ -10,7 +10,9 @@ public enum ErrorCodeEnum {
 	EMPLOYEES_NOT_FOUND("10004","Failed Request, Employees Not Found"),
 	EMPLOYEE_NOT_UPDATED("10005","Failed Request, Employee cannot be updated"),
 	NO_VALID_LEVEL("10006","Failed Request, Number of level is greater than Maximum Levels or lesser than 1 level in Organisation"),
-	MANAGER_NOT_FOUND("10007","Failed Request, Requested Manager could not be found");
+	MANAGER_NOT_FOUND("10007","Failed Request, Requested Manager could not be found"),
+	MAIL_NOT_SENT("10008","Failed Request, Mail could not be sent to the Reciepent");
+	
 	
 	private String errorCode;
 	private String errorMessage;
