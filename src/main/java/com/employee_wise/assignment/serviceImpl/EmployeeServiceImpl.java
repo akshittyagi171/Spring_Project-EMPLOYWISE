@@ -14,11 +14,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.employee_wise.assignment.constants.EmailConstants;
 import com.employee_wise.assignment.constants.ErrorCodeEnum;
+import com.employee_wise.assignment.entity.EmailDetails;
 import com.employee_wise.assignment.entity.Employee;
 import com.employee_wise.assignment.exceptions.EmployeeException;
 import com.employee_wise.assignment.repository.EmployeeRepo;
 import com.employee_wise.assignment.response.PostEmployeeResponse;
+import com.employee_wise.assignment.service.EmailService;
 import com.employee_wise.assignment.service.EmployeeService;
 
 @Service
@@ -26,6 +29,9 @@ public class EmployeeServiceImpl implements EmployeeService{
 
 	@Autowired
 	private EmployeeRepo repo;
+	
+	@Autowired
+	private EmailService emailServ;
 	
 	@Value("${Maximum_Number_Of_Levels}")
 	private int MAX_LEVEL;
@@ -41,7 +47,15 @@ public class EmployeeServiceImpl implements EmployeeService{
 					ErrorCodeEnum.EMPLOYEE_NOT_ADDED.getErrorCode(),
 					ErrorCodeEnum.EMPLOYEE_NOT_ADDED.getErrorMessage());
 		}
-		return new PostEmployeeResponse(saveEmp.getId().toString(), "Employee is Generated");
+		Employee mEmpl = getEmployeeById(emp.getReportsTo().toString());
+		if(mEmpl == null) {
+			throw new EmployeeException(HttpStatus.INTERNAL_SERVER_ERROR,
+	                ErrorCodeEnum.MANAGER_NOT_FOUND.getErrorCode(),
+	                ErrorCodeEnum.MANAGER_NOT_FOUND.getErrorMessage());
+		}
+		EmailDetails email = new EmailDetails(mEmpl.getEmail(), EmailConstants.getMessage(mEmpl.getEmployeeName(), emp), EmailConstants.getSubject(), null);
+		emailServ.sendSimpleMail(email);
+		return new PostEmployeeResponse(saveEmp.getId().toString(), "Employee is Generated and Email is Sent");
 	}
 	
 	@Override
