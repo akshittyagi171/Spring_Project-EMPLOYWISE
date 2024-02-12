@@ -53,7 +53,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 	                ErrorCodeEnum.MANAGER_NOT_FOUND.getErrorCode(),
 	                ErrorCodeEnum.MANAGER_NOT_FOUND.getErrorMessage());
 		}
-		EmailDetails email = new EmailDetails(mEmpl.getEmail(), EmailConstants.getMessage(mEmpl.getEmployeeName(), emp), EmailConstants.getSubject(), null);
+		EmailDetails email = new EmailDetails(mEmpl.getEmail(), EmailConstants.getAdditionMessage(mEmpl.getEmployeeName(), emp), EmailConstants.getAdditionSubject(), null);
 		emailServ.sendSimpleMail(email);
 		return new PostEmployeeResponse(saveEmp.getId().toString(), "Employee is Generated and Email is Sent");
 	}
@@ -93,6 +93,15 @@ public class EmployeeServiceImpl implements EmployeeService{
 	public Employee deleteEmployeeById(String id) {
 		UUID uuid = UUID.fromString(id);
 		List<Employee> emp = this.repo.findById(uuid).stream().collect(Collectors.toList());
+		Employee empl = emp.get(0);
+		Employee mEmpl = getEmployeeById(empl.getReportsTo().toString());
+		if(mEmpl == null) {
+			throw new EmployeeException(HttpStatus.INTERNAL_SERVER_ERROR,
+	                ErrorCodeEnum.MANAGER_NOT_FOUND.getErrorCode(),
+	                ErrorCodeEnum.MANAGER_NOT_FOUND.getErrorMessage());
+		}
+		EmailDetails email = new EmailDetails(mEmpl.getEmail(), EmailConstants.getDeletionMessage(mEmpl.getEmployeeName(), empl), EmailConstants.getDeletionSubject(), null);
+		emailServ.sendSimpleMail(email);
 		this.repo.deleteById(uuid);
 		return emp.get(0);
 	}
@@ -131,6 +140,14 @@ public class EmployeeServiceImpl implements EmployeeService{
 					ErrorCodeEnum.EMPLOYEE_NOT_UPDATED.getErrorCode(),
 					ErrorCodeEnum.EMPLOYEE_NOT_UPDATED.getErrorMessage());
 		}
+		Employee mEmpl = getEmployeeById(saveEmp.getReportsTo().toString());
+		if(mEmpl == null) {
+			throw new EmployeeException(HttpStatus.INTERNAL_SERVER_ERROR,
+	                ErrorCodeEnum.MANAGER_NOT_FOUND.getErrorCode(),
+	                ErrorCodeEnum.MANAGER_NOT_FOUND.getErrorMessage());
+		}
+		EmailDetails email = new EmailDetails(mEmpl.getEmail(), EmailConstants.getUpdationMessage(mEmpl.getEmployeeName(), saveEmp), EmailConstants.getUpdationSubject(), null);
+		emailServ.sendSimpleMail(email);
 		return new PostEmployeeResponse(saveEmp.getId().toString(), "Employee is Updated");
 	}
 	
