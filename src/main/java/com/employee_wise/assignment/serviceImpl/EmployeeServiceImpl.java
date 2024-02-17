@@ -110,37 +110,23 @@ public class EmployeeServiceImpl implements EmployeeService{
 	public PostEmployeeResponse updateEmployeeById(String id, Employee emp) {
 		UUID uuid = UUID.fromString(id);
 		// TODO this is not how you do it
-		List<Employee> empl = this.repo.findById(uuid).stream().collect(Collectors.toList());
-		Employee employee = empl.get(0);
-		if(employee == null) {
+		Optional<Employee> opt = this.repo.findById(uuid);
+		if(opt.isEmpty()) {
 			throw new EmployeeException(HttpStatus.INTERNAL_SERVER_ERROR,
 					ErrorCodeEnum.EMPLOYEE_NOT_FOUND.getErrorCode(),
 					ErrorCodeEnum.EMPLOYEE_NOT_FOUND.getErrorMessage());
 		}
-		else {
-			if(emp.getEmployeeName() != null) {
-				employee.setEmployeeName(emp.getEmployeeName());
-			}
-			if(emp.getEmail() != null) {
-				employee.setEmail(emp.getEmail());
-			}
-			if(emp.getPhoneNumber() != null) {
-				employee.setPhoneNumber(emp.getPhoneNumber());
-			}
-			if(emp.getReportsTo() != null) {
-				employee.setReportsTo(emp.getReportsTo());
-			}
-			if(emp.getProfileImage() != null) {
-				employee.setProfileImage(emp.getProfileImage());
-			}
-		}
+		Employee employee = opt.get();
+		// TODO this is another lotta code, no need, can do much better
+		employee.autoCopy(emp);
 
 		Employee saveEmp = this.repo.save(employee);
-		if(saveEmp == null) {
+		if(saveEmp == null) { // TODO this never happens
 			throw new EmployeeException(HttpStatus.INTERNAL_SERVER_ERROR,
 					ErrorCodeEnum.EMPLOYEE_NOT_UPDATED.getErrorCode(),
 					ErrorCodeEnum.EMPLOYEE_NOT_UPDATED.getErrorMessage());
 		}
+		// This never happens
 		Employee mEmpl = getEmployeeById(saveEmp.getReportsTo().toString());
 		if(mEmpl == null) {
 			throw new EmployeeException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -190,7 +176,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 	    while (managerId != null && n > BASE_LEVEL) {
 	        Optional<Employee> optionalManager = this.repo.findById(managerId).stream().findFirst();
 	        
-	        if (!optionalManager.isPresent()) {
+	        if (optionalManager.isEmpty()) {
 	        	throw new EmployeeException(HttpStatus.INTERNAL_SERVER_ERROR,
 		                ErrorCodeEnum.MANAGER_NOT_FOUND.getErrorCode(),
 		                ErrorCodeEnum.MANAGER_NOT_FOUND.getErrorMessage());

@@ -19,7 +19,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Document
-public class Employee {
+public class Employee implements  NonNullCopier<Employee> {
 	
 	@Id
 	@Indexed(unique = true)
