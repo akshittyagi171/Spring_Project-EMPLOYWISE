@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+// TODO migrate to record
 @Getter
 @Setter
 @AllArgsConstructor

@@ -42,7 +42,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 	@Override
 	public PostEmployeeResponse addEmployee(Employee emp) {
 		Employee saveEmp = this.repo.save(emp);
-		if(saveEmp == null) {
+		if(saveEmp == null) { // TODO refactor, this code is no go , will not get triggered - read the doc
 			throw new EmployeeException(HttpStatus.INTERNAL_SERVER_ERROR,
 					ErrorCodeEnum.EMPLOYEE_NOT_ADDED.getErrorCode(),
 					ErrorCodeEnum.EMPLOYEE_NOT_ADDED.getErrorMessage());
@@ -109,6 +109,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 	@Override
 	public PostEmployeeResponse updateEmployeeById(String id, Employee emp) {
 		UUID uuid = UUID.fromString(id);
+		// TODO this is not how you do it
 		List<Employee> empl = this.repo.findById(uuid).stream().collect(Collectors.toList());
 		Employee employee = empl.get(0);
 		if(employee == null) {
@@ -150,7 +151,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 		emailServ.sendSimpleMail(email);
 		return new PostEmployeeResponse(saveEmp.getId().toString(), "Employee is Updated");
 	}
-	
+
 	@Override
 	public PostEmployeeResponse getNthManager(String id, Integer n) {
 	    UUID uuid = UUID.fromString(id);
@@ -181,6 +182,8 @@ public class EmployeeServiceImpl implements EmployeeService{
 	    }
 	}
 
+	// TODO this is a bad impl, create a write through cache here
+	// TODO Cache out the entire org in memory and return as fast as you can
 	private Employee findNthManager(Employee employee, int n) {
 	    UUID managerId = employee.getReportsTo();
 	    

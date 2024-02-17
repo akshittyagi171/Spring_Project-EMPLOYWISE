@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+// TODO migrate to Java 17 Record
+// Not required,
 @Data
 @Getter
 @Setter

@@ -34,12 +34,12 @@ public class EmailServiceImpl implements EmailService {
             SimpleMailMessage mailMessage = new SimpleMailMessage();
             
             mailMessage.setFrom(sender);
-            mailMessage.setTo(details.getRecipient());
-            mailMessage.setText(details.getMsgBody());
-            mailMessage.setSubject(details.getSubject());
+            mailMessage.setTo(details.recipient());
+            mailMessage.setText(details.msgBody());
+            mailMessage.setSubject(details.subject());
  
             javaMailSender.send(mailMessage);
-            return new EmailResponse(details.getRecipient().toString(),"Email is Successfully sent to Recipent.");
+            return new EmailResponse(details.recipient(),"Email is Successfully sent to Recipent.");
         }
         catch (Exception e) {
         	throw new EmployeeException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -56,16 +56,16 @@ public class EmailServiceImpl implements EmailService {
         try {
             mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
             mimeMessageHelper.setFrom(sender);
-            mimeMessageHelper.setTo(details.getRecipient());
-            mimeMessageHelper.setText(details.getMsgBody());
-            mimeMessageHelper.setSubject(details.getSubject());
+            mimeMessageHelper.setTo(details.recipient());
+            mimeMessageHelper.setText(details.msgBody());
+            mimeMessageHelper.setSubject(details.subject());
  
-            FileSystemResource file = new FileSystemResource(new File(details.getAttachment()));
+            FileSystemResource file = new FileSystemResource(new File(details.attachment()));
  
             mimeMessageHelper.addAttachment(file.getFilename(), file);
 
             javaMailSender.send(mimeMessage);
-            return new EmailResponse(details.getRecipient().toString(),"Email with provided Attachment is Successfully sent to Recipent.");
+            return new EmailResponse(details.recipient(),"Email with provided Attachment is Successfully sent to Recipent.");
         }
         catch (MessagingException e) {
         	throw new EmployeeException(HttpStatus.INTERNAL_SERVER_ERROR,

@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
+// TODO migrate this to Record too - Java 17 Records
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

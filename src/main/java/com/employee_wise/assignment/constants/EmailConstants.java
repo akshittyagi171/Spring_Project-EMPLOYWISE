@@ -2,6 +2,8 @@ package com.employee_wise.assignment.constants;
 
 import com.employee_wise.assignment.entity.Employee;
 
+// TODO this can be done via something called Server side templating engine
+//
 public class EmailConstants {
 	
 	public static String getAdditionMessage(String manName, Employee emp) {
