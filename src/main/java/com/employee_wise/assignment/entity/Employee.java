@@ -12,14 +12,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
+// TODO migrate this to Record too - Java 17 Records
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Document
-public class Employee {
+public class Employee implements  NonNullCopier<Employee> {
 	
 	@Id
 	@Indexed(unique = true)

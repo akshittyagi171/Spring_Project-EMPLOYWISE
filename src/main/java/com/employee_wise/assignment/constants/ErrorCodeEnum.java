@@ -14,8 +14,8 @@ public enum ErrorCodeEnum {
 	MAIL_NOT_SENT("10008","Failed Request, Mail could not be sent to the Reciepent");
 	
 	
-	private String errorCode;
-	private String errorMessage;
+	private final String errorCode;
+	private final String errorMessage;
 	
 	private ErrorCodeEnum(String errorCode, String errorMessage) {
 		this.errorCode=errorCode;

@@ -1,5 +1,6 @@
 package com.employee_wise.assignment.constants;
 
+// TODO this entire class is useless
 public class EndPoint {
 	
 	public static final String EMPLOYEE = "/employee";

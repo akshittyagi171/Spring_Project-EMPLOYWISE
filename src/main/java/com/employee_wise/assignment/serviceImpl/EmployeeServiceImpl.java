@@ -42,7 +42,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 	@Override
 	public PostEmployeeResponse addEmployee(Employee emp) {
 		Employee saveEmp = this.repo.save(emp);
-		if(saveEmp == null) {
+		if(saveEmp == null) { // TODO refactor, this code is no go , will not get triggered - read the doc
 			throw new EmployeeException(HttpStatus.INTERNAL_SERVER_ERROR,
 					ErrorCodeEnum.EMPLOYEE_NOT_ADDED.getErrorCode(),
 					ErrorCodeEnum.EMPLOYEE_NOT_ADDED.getErrorMessage());
@@ -109,37 +109,24 @@ public class EmployeeServiceImpl implements EmployeeService{
 	@Override
 	public PostEmployeeResponse updateEmployeeById(String id, Employee emp) {
 		UUID uuid = UUID.fromString(id);
-		List<Employee> empl = this.repo.findById(uuid).stream().collect(Collectors.toList());
-		Employee employee = empl.get(0);
-		if(employee == null) {
+		// TODO this is not how you do it
+		Optional<Employee> opt = this.repo.findById(uuid);
+		if(opt.isEmpty()) {
 			throw new EmployeeException(HttpStatus.INTERNAL_SERVER_ERROR,
 					ErrorCodeEnum.EMPLOYEE_NOT_FOUND.getErrorCode(),
 					ErrorCodeEnum.EMPLOYEE_NOT_FOUND.getErrorMessage());
 		}
-		else {
-			if(emp.getEmployeeName() != null) {
-				employee.setEmployeeName(emp.getEmployeeName());
-			}
-			if(emp.getEmail() != null) {
-				employee.setEmail(emp.getEmail());
-			}
-			if(emp.getPhoneNumber() != null) {
-				employee.setPhoneNumber(emp.getPhoneNumber());
-			}
-			if(emp.getReportsTo() != null) {
-				employee.setReportsTo(emp.getReportsTo());
-			}
-			if(emp.getProfileImage() != null) {
-				employee.setProfileImage(emp.getProfileImage());
-			}
-		}
+		Employee employee = opt.get();
+		// TODO this is another lotta code, no need, can do much better
+		employee.autoCopy(emp);
 
 		Employee saveEmp = this.repo.save(employee);
-		if(saveEmp == null) {
+		if(saveEmp == null) { // TODO this never happens
 			throw new EmployeeException(HttpStatus.INTERNAL_SERVER_ERROR,
 					ErrorCodeEnum.EMPLOYEE_NOT_UPDATED.getErrorCode(),
 					ErrorCodeEnum.EMPLOYEE_NOT_UPDATED.getErrorMessage());
 		}
+		// This never happens
 		Employee mEmpl = getEmployeeById(saveEmp.getReportsTo().toString());
 		if(mEmpl == null) {
 			throw new EmployeeException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -150,7 +137,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 		emailServ.sendSimpleMail(email);
 		return new PostEmployeeResponse(saveEmp.getId().toString(), "Employee is Updated");
 	}
-	
+
 	@Override
 	public PostEmployeeResponse getNthManager(String id, Integer n) {
 	    UUID uuid = UUID.fromString(id);
@@ -181,13 +168,15 @@ public class EmployeeServiceImpl implements EmployeeService{
 	    }
 	}
 
+	// TODO this is a bad impl, create a write through cache here
+	// TODO Cache out the entire org in memory and return as fast as you can
 	private Employee findNthManager(Employee employee, int n) {
 	    UUID managerId = employee.getReportsTo();
 	    
 	    while (managerId != null && n > BASE_LEVEL) {
 	        Optional<Employee> optionalManager = this.repo.findById(managerId).stream().findFirst();
 	        
-	        if (!optionalManager.isPresent()) {
+	        if (optionalManager.isEmpty()) {
 	        	throw new EmployeeException(HttpStatus.INTERNAL_SERVER_ERROR,
 		                ErrorCodeEnum.MANAGER_NOT_FOUND.getErrorCode(),
 		                ErrorCodeEnum.MANAGER_NOT_FOUND.getErrorMessage());

@@ -10,10 +10,13 @@ import com.employee_wise.assignment.response.PostEmployeeResponse;
 @Service
 public interface EmployeeService {
 
-	public PostEmployeeResponse addEmployee(Employee emp);
-	public List<Employee> getAllEmployee(Integer pageNumber, Integer pageSize, String sortBy);
-	public Employee getEmployeeById(String Id);
-	public PostEmployeeResponse updateEmployeeById(String id,Employee emp);
-	public Employee deleteEmployeeById(String id);
-	public PostEmployeeResponse getNthManager(String id, Integer n);
+	// TODO, refactor to return the new created employee id
+	PostEmployeeResponse addEmployee(Employee emp);
+	List<Employee> getAllEmployee(Integer pageNumber, Integer pageSize, String sortBy);
+	Employee getEmployeeById(String Id);
+	PostEmployeeResponse updateEmployeeById(String id,Employee emp);
+	Employee deleteEmployeeById(String id);
+
+	// TODO refactor to return the Employee, not this
+	PostEmployeeResponse getNthManager(String id, Integer n);
 }
